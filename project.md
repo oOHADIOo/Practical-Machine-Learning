@@ -45,10 +45,8 @@ dim(training.raw)
 ```r
 # Res 2 - excluded because excessivness
 # head(training.raw)
-
 # Res 3 - excluded because excessivness
 #str(training.raw)
-
 # Res 4 - excluded because excessivness
 #summary(training.raw)
 ```
@@ -100,9 +98,7 @@ Since the test set provided is the the ultimate validation set, we will split th
 ```r
 set.seed(19791108)
 library(caret)
-
 classeIndex <- which(names(training.cleaned) == "classe")
-
 partition <- createDataPartition(y=training.cleaned$classe, p=0.75, list=FALSE)
 training.subSetTrain <- training.cleaned[partition, ]
 training.subSetTest <- training.cleaned[-partition, ]
@@ -130,13 +126,10 @@ Let's check visually if there is indeed hard to use these 2 as possible simple l
 ```r
 library(Rmisc)
 library(ggplot2)
-
 p1 <- ggplot(training.subSetTrain, aes(classe,pitch_forearm)) + 
   geom_boxplot(aes(fill=classe))
-
 p2 <- ggplot(training.subSetTrain, aes(classe, magnet_arm_x)) + 
   geom_boxplot(aes(fill=classe))
-
 multiplot(p1,p2,cols=2)
 ```
 
@@ -171,8 +164,6 @@ pcaPreProcess.all <- preProcess(training.subSetTrain[, -classeIndex], method = "
 training.subSetTrain.pca.all <- predict(pcaPreProcess.all, training.subSetTrain[, -classeIndex])
 training.subSetTest.pca.all <- predict(pcaPreProcess.all, training.subSetTest[, -classeIndex])
 testing.pca.all <- predict(pcaPreProcess.all, testing.cleaned[, -classeIndex])
-
-
 pcaPreProcess.subset <- preProcess(training.subSetTrain[, -excludeColumns], method = "pca", thresh = 0.99)
 training.subSetTrain.pca.subset <- predict(pcaPreProcess.subset, training.subSetTrain[, -excludeColumns])
 training.subSetTest.pca.subset <- predict(pcaPreProcess.subset, training.subSetTest[, -excludeColumns])
@@ -186,9 +177,7 @@ Also we will time each of the 4 random forest models to see if when all else is 
 
 ```r
 library(randomForest)
-
 ntree <- 200 #This is enough for great accuracy (trust me, I'm an engineer). 
-
 start <- proc.time()
 rfMod.cleaned <- randomForest(
   x=training.subSetTrain[, -classeIndex], 
@@ -487,7 +476,6 @@ To really look in depth at the distances between predictions we can use MDSplot 
 
 ```r
 start <- proc.time()
-
 library(RColorBrewer)
 palette <- brewer.pal(length(classeLevels), "Set1")
 rfMod.mds <- MDSplot(rfMod.exclude, as.factor(classeLevels), k=2, pch=20, palette=palette)
@@ -498,7 +486,6 @@ rfMod.mds <- MDSplot(rfMod.exclude, as.factor(classeLevels), k=2, pch=20, palett
 ```r
 library(cluster)
 rfMod.pam <- pam(1 - rfMod.exclude$proximity, k=length(classeLevels), diss=TRUE)
-
 plot(
   rfMod.mds$points[, 1], 
   rfMod.mds$points[, 2], 
@@ -548,5 +535,4 @@ predictions
 ```
 
 The predictions don't really change a lot with each model, but since we have most faith in the `rfMod.exclude`, we'll keep that as final answer. 
-
 
