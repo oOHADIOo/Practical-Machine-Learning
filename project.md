@@ -1,7 +1,6 @@
 # Predictions using the Weight Lifting Exercises Dataset
-Tom Lous  
-17 May 2016  
-
+Hadi Al-Naser
+2020/08/8
 
 
 ## Executive Summary
@@ -549,4 +548,5 @@ predictions
 ```
 
 The predictions don't really change a lot with each model, but since we have most faith in the `rfMod.exclude`, we'll keep that as final answer. 
+
 
